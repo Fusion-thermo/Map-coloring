@@ -15,7 +15,6 @@ def hex_to_rgb(value):
     lv = len(value)
     return tuple(int(value[i:i + lv // 3], 16) for i in range(0, lv, lv // 3))
 
-rayon=5
 couleurs=[(255,0,0),(0,255,0),(0,0,255),(219,20,255),(255,168,63),(0,255,255),(255,255,0)]
 couleurs=[rgb_to_hex(i) for i in couleurs]
 
@@ -65,8 +64,6 @@ def noir_et_blanc(image):
     image=Img.fromarray(matrice,"RGB")
     return image
 
-#file('../../eee.jpg')
-
 def coloriage():
     recursif = fenetre.after(400,coloriage)
     global matrice, hauteur,largeur,picture, colors_map
@@ -113,6 +110,7 @@ def coloriage():
 
 def Clic_gauche(event):
     global x_clic, y_clic,node,edge_line,numero_node
+    rayon=int(Rayon.get())
     x_clic=event.x
     y_clic=event.y
     nouveau=True
@@ -132,7 +130,8 @@ def Clic_gauche_survol(event):
     Canevas.coords(edge_line,x_clic,y_clic,event.x,event.y)
 
 def Clic_gauche_release(event):
-    global numero_node,node,x_clic, y_clic,nouveau_node,nodes,edges
+    global numero_node,node,x_clic, y_clic,nouveau_node,nodes,edges, edge_line, disque
+    rayon=int(Rayon.get())
     x_save=x_clic
     y_save=y_clic
     x_clic=event.x
@@ -141,13 +140,14 @@ def Clic_gauche_release(event):
     for coos_node in nodes.keys():
         if (x_clic-coos_node[0])**2 + (y_clic-coos_node[1])**2 <= rayon**2:
             x_clic, y_clic=coos_node
+            disque=Canevas.create_oval(x_clic-rayon,y_clic-rayon,x_clic+rayon,y_clic+rayon,fill="green")
             Canevas.coords(edge_line,x_save,y_save, x_clic,y_clic)
             if node != nodes[(x_clic, y_clic)]:
                 edge=(node,nodes[(x_clic, y_clic)])
                 edges.append(edge)
             nouveau_node=False
     if nouveau_node:
-        Canevas.create_oval(x_clic-rayon,y_clic-rayon,x_clic+rayon,y_clic+rayon,fill="green")
+        disque=Canevas.create_oval(x_clic-rayon,y_clic-rayon,x_clic+rayon,y_clic+rayon,fill="green")
         nodes[(x_clic,y_clic)]=numero_node
         if node != numero_node:
             edge=(node,numero_node)
@@ -215,6 +215,7 @@ def resolution_graphe(G):
 
 def resolution():
     global edges,colors_map,sol,nodes
+    rayon=int(Rayon.get())
     avancement.set("Résolution")
     G.add_edges_from(edges)
     xhi, sol = resolution_graphe(G)
@@ -238,12 +239,14 @@ def resolution():
 
 
 def erreur_node():
-    global nodes, edges, nouveau_node, numero_node
-    edges.pop()
+    global numero_node
+    edges.pop() #edge entre les deux nodes
+    Canevas.delete(edge_line) #trait entre les deux nodes
+    Canevas.delete(disque) #disque 
     numero_node-=1
     for clef in nodes.keys():
         if nodes[clef]==numero_node:
-            del nodes[clef]
+            del nodes[clef]#node
             break
 
 def reset_carte():
@@ -275,6 +278,11 @@ bouton_erreur.pack()
 
 bouton_reset = Button(fenetre,  text = 'Reset carte',  command = reset_carte)
 bouton_reset.pack()
+
+Rayon=StringVar()
+Rayon.set(7)
+rayon_scale=Scale(fenetre,  orient='horizontal',  from_=1,  to=15,  resolution=1, tickinterval=5,  label='Rayon',  variable=Rayon)
+rayon_scale.pack(side="top")
 
 Bouton1 = Button(fenetre,  text = 'Quitter',  command = fenetre.destroy)
 Bouton1.pack()
