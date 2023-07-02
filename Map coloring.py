@@ -6,7 +6,6 @@ import tkinter.filedialog
 import networkx as nx
 from pyomo.environ import ConcreteModel, Var, Objective, Constraint, SolverFactory, Binary, RangeSet
 
-
 def rgb_to_hex(rgb):
     return '#'+'%02x%02x%02x' % rgb
 
@@ -53,7 +52,6 @@ def noir_et_blanc(image):
     #noir et blanc mais en mode rgb, donc pas de mode("1")
     matrice=np.array(image)
     largeur_ici,hauteur_ici=image.size
-    #print(largeur,hauteur)
 
     for i in range(hauteur_ici):
         for j in range(largeur_ici):
@@ -78,7 +76,6 @@ def coloriage():
         a=2
 
     while len(frontiere)>0:
-        #print(len(frontiere))
         nouveau=[]
         for pixel in frontiere:
             if pixel.x+1<hauteur and (matrice[pixel.x+1,pixel.y] == 255).all():
@@ -94,10 +91,6 @@ def coloriage():
                 matrice[pixel.x,pixel.y - 1] = couleur
                 nouveau.append(Pixel(pixel.x,pixel.y - 1))
         frontiere=nouveau[:]
-        # if abs(len(frontiere)-avant)>100:
-        #     print("F", len(frontiere))
-        #     avant=len(frontiere)
-        #break
     colors_map.remove(zone)
     
     img=Img.fromarray(matrice,"RGB")
