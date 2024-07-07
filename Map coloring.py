@@ -71,10 +71,6 @@ def coloriage():
     origine=Pixel(zone[0][1],zone[0][0])
     matrice[origine.x,origine.y] = couleur
     frontiere=[origine]
-    avant=1
-    if len(colors_map)==1:
-        a=2
-
     while len(frontiere)>0:
         nouveau=[]
         for pixel in frontiere:
